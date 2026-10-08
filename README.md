@@ -1,2 +1,2 @@
 # tiendaia-equipo4
-Equipo: B primero
+Equipo: B primero Equipo: A primero
