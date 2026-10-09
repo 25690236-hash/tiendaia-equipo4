@@ -146,3 +146,7 @@ def crear_recomendacion(payload: dict = {}):
 def ver_historial(limite: int = 10):
     registros = obtener_de_supabase(limite)
     return registros
+
+@app.get("/")
+def read_root():
+    return {"mensaje": "¡Servidor de Tienda IA activo!"}
