@@ -52,7 +52,7 @@ services:
   # Ninguno publica puertos (no hay "ports"): solo se alcanzan dentro de la red
   # interna de Compose, por su nombre (http://clientes:8000). Escuchan en el 8000.
   clientes:
-    <<: *servicio                  # copia las opciones comunes del ancla &servicio
+    <<: *servicio                    # copia las opciones comunes del ancla &servicio
     # Misma imagen base, pero con SERVICIO=clientes (ver Dockerfile)
     build: {<<: *construir, args: {SERVICIO: clientes}}
     environment:
@@ -99,7 +99,7 @@ services:
     environment:
       # Orígenes que pueden llamar al gateway desde el navegador (CORS). "*" = todos;
       # en la nube conviene poner la URL exacta del cliente web.
-      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      CORS_ORIGINS: "*"
     depends_on: [clientes, productos, ventas, ia]
 
   # --------------------------------- Cliente web
