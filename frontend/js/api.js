@@ -26,9 +26,9 @@ this.estado = estado;
 }
 }
 const Api = {
-// URL del gateway sin "/" al final, p. ej. http://localhost:8080
+// URL del gateway fija a la fuerza para evitar cualquier error de conexión
 base() {
-return leerAjuste("tiendaia_api", "http://localhost:8080").replace(/\/+$/, "");
+return "http://localhost:8080";
 },
 fijarBase(url) { guardarAjuste("tiendaia_api", url.trim()); },
 // Token JWT (Laboratorio 6). Mientras no exista, las peticiones van sin él.
@@ -74,5 +74,5 @@ return datos;
 get(ruta) { return this.pedir("GET", ruta); },
 post(ruta, cuerpo) { return this.pedir("POST", ruta, cuerpo); },
 put(ruta, cuerpo) { return this.pedir("PUT", ruta, cuerpo); },
-borrar(ruta) { return this.pedir("DELETE", ruta); },
+borrar(ruta) { return this.pedir("DELETE", ruta); }
 };
