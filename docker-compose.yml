@@ -2,6 +2,7 @@
 
 # Configuración reutilizable de los microservicios
 x-servicio: &servicio
+<<<<<<< HEAD
   restart: unless-stopped
   build: &construir
     context: .
@@ -13,18 +14,32 @@ x-servicio: &servicio
 
 services:
   # Bases de datos
+=======
+  restart: unless-stopped # reinicia si falla, salvo que se detenga a mano
+  build: &construir
+    context: . # se construye con el Dockerfile de esta carpeta
+
+services:
+# ------------------------------ Bases de datos
+  # MySQL: base relacional para Clientes
+>>>>>>> b32faee (Lab 2: pruebas)
   mysql:
     image: mysql:8.4
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+<<<<<<< HEAD
       MYSQL_DATABASE: tienda
       MYSQL_USER: tienda
+=======
+      MYSQL_DATABASE: tienda # base que se crea al iniciar por primera vez
+      MYSQL_USER: tienda # usuario de la aplicación (no se usa root)
+>>>>>>> b32faee (Lab 2: pruebas)
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD","mysqladmin","ping","-h","localhost"]
       interval: 5s
       retries: 20
     networks: [interna]
@@ -35,7 +50,7 @@ services:
     volumes:
       - mongo_data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD","mongosh","--quiet","--eval","db.adminCommand('ping')"]
       interval: 5s
       retries: 20
     networks: [interna]
@@ -43,6 +58,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+<<<<<<< HEAD
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_data:/data
@@ -60,6 +76,19 @@ services:
       <<: *construir
       args:
         SERVICIO: clientes
+=======
+    # --appendonly yes: guarda cada escritura en disco para no perder datos al reiniciar
+    command: ["redis-server","--appendonly","yes"]
+    volumes: [redis_data:/data]
+
+# ------------------------------ Microservicios
+# Ninguno publica puertos (no hay "ports"): solo se alcanzan dentro de la red
+# interna de Compose, por su nombre (http://clientes:8000). Escuchan en el 8000.
+  clientes:
+    <<: *servicio # copia las opciones comunes del ancla &servicio
+# Misma imagen base, pero con SERVICIO=clientes (ver Dockerfile)
+    build: {<<: *construir, args: {SERVICIO: clientes}}
+>>>>>>> b32faee (Lab 2: pruebas)
     environment:
       DATABASE_URL: mysql+pymysql://tienda:${MYSQL_PASSWORD}@mysql:3306/tienda
     depends_on:
@@ -67,6 +96,7 @@ services:
         condition: service_healthy
     networks: [interna]
 
+<<<<<<< HEAD
   productos:
     <<: *servicio
     build:
@@ -81,6 +111,16 @@ services:
     networks: [interna]
 
   ventas:
+=======
+  productos: 
+    <<: *servicio
+    build: {<<: *construir, args: {SERVICIO: productos}}
+    environment:
+      MONGO_URL: mongodb://mongo:27017
+    depends_on: {mongo: {condition: service_healthy}}
+  
+  ventas: 
+>>>>>>> b32faee (Lab 2: pruebas)
     <<: *servicio
     build:
       <<: *construir
@@ -100,14 +140,18 @@ services:
         condition: service_healthy
     networks: [interna]
 
-  ia:
+  ia: 
     <<: *servicio
     build:
       <<: *construir
       args:
         SERVICIO: ia_service
     environment:
+<<<<<<< HEAD
       VENTAS_URL: http://ventas:8000
+=======
+      VENTAS_URL: http://ventas:8000 # de aquí obtiene los datos para entrenar
+>>>>>>> b32faee (Lab 2: pruebas)
       MODELO_PATH: /modelos/modelo.joblib
       REDIS_HOST: redis
       RABBITMQ_HOST: "${RABBITMQ_HOST:-rabbitmq}"
@@ -168,13 +212,19 @@ services:
         condition: service_healthy
     networks: [interna]
 
+<<<<<<< HEAD
   gateway:
+=======
+  # ------------------------------ Punto de entrada
+  gateway: 
+>>>>>>> b32faee (Lab 2: pruebas)
     <<: *servicio
     build:
       <<: *construir
       args:
         SERVICIO: gateway
     environment:
+<<<<<<< HEAD
       CORS_ORIGINS: "*"
       IA_URL: ${IA_URL:-http://ia:8000}
     depends_on:
@@ -231,6 +281,24 @@ services:
   # docker-compose.yml original que compartiste.
   # Añádelos aquí con su configuración original y los cambios del Anexo A.8.
 
+=======
+    # Orígenes que pueden llamar al gateway desde el navegador (CORS). "*" = todos;
+    # en la nube conviene poner la URL exacta del cliente web.
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+    depends_on: [clientes, productos, ventas, ia]
+  
+  # ------------------------------ Cliente web
+  # Nginx sirve los archivos estáticos de frontend/ (HTML, CSS y JS) tal cual.
+  # Se abre en http://localhost:8081; el navegador llama al gateway en el 8080.
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    # :ro = solo lectura; al editar un archivo basta con recargar el navegador
+    volumes: ["./frontend:/usr/share/nginx/html:ro"]
+    ports: ["8081:80"]
+    # Volúmenes con nombre: Docker los administra y conservan los datos
+  
+>>>>>>> b32faee (Lab 2: pruebas)
 volumes:
   mysql_data:
   mongo_data:
