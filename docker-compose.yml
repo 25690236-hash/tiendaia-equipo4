@@ -68,21 +68,22 @@ services:
       MONGO_URL: mongodb://mongo:27017
     depends_on: {mongo: {condition: service_healthy}}
   
-  ventas: 
+  ventas:
     <<: *servicio
     build: {<<: *construir, args: {SERVICIO: ventas}}
     environment:
       REDIS_HOST: redis
-    # Ventas llama a Clientes y Productos: se inician antes (solo orden de arranque)
+      RABBITMQ_HOST: rabbitmq # Lab. 3
     depends_on: [redis, clientes, productos]
 
   ia: 
     <<: *servicio
     build: {<<: *construir, args: {SERVICIO: ia_service}}
     environment:
-      VENTAS_URL: http://ventas:8000 # de aquí obtiene los datos para entrenar
+      VENTAS_URL: http://ventas:8000
       MODELO_PATH: /modelos/modelo.joblib
-    # El modelo entrenado se guarda en un volumen para no perderlo al recrear
+      REDIS_HOST: redis # Lab. 3
+      RABBITMQ_HOST: rabbitmq # Lab. 3
     volumes: [modelos:/modelos]
     depends_on: [ventas]
 
@@ -109,7 +110,48 @@ services:
     volumes: ["./frontend:/usr/share/nginx/html:ro"]
     ports: ["8081:80"]
     # Volúmenes con nombre: Docker los administra y conservan los datos
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    restart: unless-stopped
+    # 15672 es el panel web. Se publica solo en 127.0.0.1 para que nadie de la red
+    # pueda entrar. El puerto AMQP (5672) NO se publica: solo lo usan los servicios
+    # dentro de la red interna de Docker Compose.
+    ports: ["127.0.0.1:15672:15672"] # panel web solo desde tu máquina
+    # El healthcheck indica cuándo el broker ya acepta conexiones; los servicios
+    # que dependen de él esperan a que esté "healthy" antes de arrancar.
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      retries: 10
   
+  # ------------------------------------------------------------ Suscriptor de eventos
+# Notificaciones escucha los eventos "venta.*" que publica Ventas (Pub/Sub) y
+# guarda los avisos en Redis. Usa la misma imagen común con SERVICIO=notificaciones.
+  notificaciones:
+    <<: *servicio
+    build: {<<: *construir, args: {SERVICIO: notificaciones}}
+    # Los hosts se llaman por el nombre del servicio dentro de la red de Compose
+    environment: {REDIS_HOST: redis, RABBITMQ_HOST: rabbitmq}
+    depends_on: {rabbitmq: {condition: service_healthy}}
+
+  # ------------------------------------------------------------ Worker de inferencia
+# Proceso que consume la cola de trabajo "inferencias". Usa el MISMO código e
+# imagen que el servicio de IA, pero arranca worker.py en lugar de uvicorn.
+# Se pueden lanzar varias copias: docker compose up -d --scale worker=3
+  worker:
+    <<: *servicio
+    build: {<<: *construir, args: {SERVICIO: ia_service}}
+    command: ["python", "worker.py"] # reemplaza el CMD (uvicorn) del Dockerfile
+    environment:
+      MODELO_PATH: /modelos/modelo.joblib # modelo entrenado por el servicio de IA
+      REDIS_HOST: redis # donde se escribe el resultado
+      RABBITMQ_HOST: rabbitmq # de donde se leen las solicitudes
+      RETARDO_MS: "200" # pausa artificial: simula un modelo pesado
+    # Volumen compartido con "ia": el worker lee el modelo que "ia" guardó al entrenar
+    volumes: [modelos:/modelos]
+    depends_on: {rabbitmq: {condition: service_healthy}}
+    
 volumes:
   mysql_data:
   mongo_data:
