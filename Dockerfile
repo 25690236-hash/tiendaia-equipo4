@@ -1,13 +1,19 @@
-FROM python:3.12-slim
-ARG SERVICIO
+FROM python:3.11-slim
+
 WORKDIR /app
-COPY ${SERVICIO}/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY comun/ ./
-COPY ${SERVICIO}/ ./
-RUN useradd --create-home app && \
-    mkdir -p /modelos /data && \
-    chown app /modelos /data
-USER app
-EXPOSE 8000
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+
+ARG SERVICIO
+
+# Copiar todo el proyecto al contenedor
+COPY . .
+
+# Cada servicio instala sus propias dependencias, incluidas las del controlador
+# de base de datos y las bibliotecas de entrenamiento de IA.
+RUN pip install --no-cache-dir -r "${SERVICIO}/requirements.txt"
+
+# Cada servicio compila la misma imagen indicando su módulo (clientes, productos,
+# ventas, ia_service o gateway) como argumento SERVICIO.
+ENV SERVICIO=${SERVICIO}
+ENV PYTHONPATH=/app
+
+CMD ["sh", "-c", "uvicorn ${SERVICIO}.app:app --host 0.0.0.0 --port 8000"]
