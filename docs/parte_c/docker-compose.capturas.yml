@@ -1,0 +1,6 @@
+# Override temporal para repetir las pruebas iniciales de Parte C sin borrar
+# los datos del proyecto principal. Usa puertos alternativos.
+services:
+  gateway:
+    ports: !override
+      - "8082:8000"
