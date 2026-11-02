@@ -71,11 +71,14 @@ def consumir():
         conexion = None
 
         try:
-            parametros = pika.ConnectionParameters(
-                host=RABBIT_HOST,
-                heartbeat=30,
-                blocked_connection_timeout=10
-            )
+            if "://" in RABBIT_HOST:
+                parametros = pika.URLParameters(RABBIT_HOST)
+            else:
+                parametros = pika.ConnectionParameters(
+                    host=RABBIT_HOST,
+                    heartbeat=30,
+                    blocked_connection_timeout=10
+    )
 
             conexion = pika.BlockingConnection(parametros)
             canal = conexion.channel()
