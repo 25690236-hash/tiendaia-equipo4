@@ -16,12 +16,15 @@ def publicar(tipo_evento: str, datos: dict) -> bool:
     conexion = None
 
     try:
-        parametros = pika.ConnectionParameters(
-            host=RABBITMQ_HOST,
-            connection_attempts=3,
-            retry_delay=2,
-            socket_timeout=5
-        )
+        if "://" in RABBITMQ_HOST:
+            parametros = pika.URLParameters(RABBITMQ_HOST)
+        else:
+            parametros = pika.ConnectionParameters(
+                host=RABBITMQ_HOST,
+                connection_attempts=3,
+                retry_delay=2,
+                socket_timeout=5
+    )
 
         conexion = pika.BlockingConnection(parametros)
         canal = conexion.channel()
