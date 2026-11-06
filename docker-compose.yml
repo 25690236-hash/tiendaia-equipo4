@@ -151,9 +151,46 @@ services:
     # Volumen compartido con "ia": el worker lee el modelo que "ia" guardó al entrenar
     volumes: [modelos:/modelos]
     depends_on: {rabbitmq: {condition: service_healthy}}
+
+# Agregar a docker-compose.yml (Laboratorio 4)
+# Fragmento: estos dos servicios van dentro de "services:" del compose de TiendaIA.
+# Usa las anclas &servicio y &construir definidas al inicio de ese archivo.
+# SeaweedFS: almacenamiento de objetos con API compatible con Amazon S3.
+# "server" levanta en un solo contenedor el master (índice), el volumen
+# (guarda los bytes), el filer y la puerta S3.
+  seaweedfs:
+    image: chrislusf/seaweedfs
+    restart: unless-stopped
+    # -volume.max: máximo de volúmenes; -master.volumeSizeLimitMB: tamaño de
+    # cada volumen; -s3.config: archivo con identidades (llaves) y permisos.
+    # ">-" une las líneas siguientes en una sola (mismo comando, solo más legible).
+    command: >-
+      server -dir=/data -volume.max=100 -master.volumeSizeLimitMB=1024
+      -s3 -s3.config=/etc/seaweedfs/s3.json
+    # 8333 = puerto de la API S3. Se publica porque el navegador descarga las
+    # imágenes directamente de aquí con las URL prefirmadas.
+    ports: ["8333:8333"]
+    volumes:
+      - seaweed_data:/data # los objetos sobreviven al contenedor
+      - ./seaweed/s3.json:/etc/seaweedfs/s3.json:ro # :ro = solo lectura
+  # Microservicio Imágenes: sube y borra objetos y firma URL de descarga.
+  imagenes:
+    <<: *servicio # restart común a todos
+    build: {<<: *construir, args: {SERVICIO: imagenes}}
+    environment:
+      S3_ENDPOINT: http://seaweedfs:8333 # red interna de Docker
+      S3_PUBLIC_ENDPOINT: http://localhost:8333 # el navegador descarga desde aquí
+      S3_BUCKET: tiendaia-imagenes
+      S3_ACCESS_KEY: ${S3_ADMIN_KEY} # Lab. 6: cambiar a identidad propia
+      S3_SECRET_KEY: ${S3_ADMIN_SECRET} # valores tomados del archivo .env
+    # Orden de arranque: primero S3 y Productos (Imágenes llama a ambos)
+    depends_on: [seaweedfs, productos]
+# Y en volumes: seaweed_data:
     
 volumes:
   mysql_data:
   mongo_data:
   redis_data:
   modelos:
+  seaweed_data: # NUEVO (Laboratorio 4): objetos de SeaweedFS
+
