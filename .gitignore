@@ -229,4 +229,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+<<<<<<< HEAD
 *.joblib
+=======
+seaweed/s3.json
+bench.env
+>>>>>>> 0e37ba3 (Paso 4. Unir el fragmento con su docker-compose.yml completado)
