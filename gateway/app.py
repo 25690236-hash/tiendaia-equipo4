@@ -38,6 +38,7 @@ RUTAS = {
     "ventas": os.getenv("VENTAS_URL", "http://ventas:8000"),
     "ia": os.getenv("IA_URL", "http://ia:8000"),
 <<<<<<< HEAD
+<<<<<<< HEAD
     "notificaciones": os.getenv(
         "NOTIFICACIONES_URL",
         "http://notificaciones:8000"
@@ -45,6 +46,10 @@ RUTAS = {
 =======
     "notificaciones": os.getenv("NOTIF_URL", "http://notificaciones:8000"), # Lab. 3
 >>>>>>> ee54333 (Lab3: RabbitMQ en Compose, dependencias y ruta de notificaciones)
+=======
+    "notificaciones": os.getenv("NOTIF_URL", "http://notificaciones:8000"), 
+    "imagenes": os.getenv("IMAGENES_URL", "http://imagenes:8000"),# Lab. 3
+>>>>>>> f7debb6 (Lab4: Imagen-Service y PUT de Productos)
 }
 
 

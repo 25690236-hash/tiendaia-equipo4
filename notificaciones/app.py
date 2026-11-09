@@ -71,6 +71,7 @@ def consumir():
         conexion = None
 
         try:
+<<<<<<< HEAD
             if "://" in RABBIT_HOST:
                 parametros = pika.URLParameters(RABBIT_HOST)
             else:
@@ -79,6 +80,13 @@ def consumir():
                     heartbeat=30,
                     blocked_connection_timeout=10
     )
+=======
+            parametros = pika.ConnectionParameters(
+                host=RABBIT_HOST,
+                heartbeat=30,
+                blocked_connection_timeout=10
+            )
+>>>>>>> f7debb6 (Lab4: Imagen-Service y PUT de Productos)
 
             conexion = pika.BlockingConnection(parametros)
             canal = conexion.channel()

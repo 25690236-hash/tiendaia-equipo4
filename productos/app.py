@@ -35,7 +35,8 @@ class ProductoIn(BaseModel):
     # Field(gt=0): "greater than 0", el precio debe ser estrictamente positivo
     precio: float = Field(gt=0)
     categoria: str = "general"       # valor por omisión si no se envía
-
+class ImagenIn(BaseModel):
+    imagen_key: str | None = None
 
 def siguiente_id() -> int:
     """Id entero autoincremental (MongoDB no lo tiene: usamos un contador)."""
@@ -101,6 +102,17 @@ def actualizar(producto_id: int, p: ProductoIn):
     if r.matched_count == 0:
         raise HTTPException(404, "Producto no encontrado")
     return {"id": producto_id, **p.model_dump()}
+
+@app.put("/productos/{producto_id}/imagen")
+def actualizar_imagen(producto_id: int, datos: ImagenIn):
+    resultado = db.productos.update_one(
+        {"id": producto_id},
+        {"$set": {"imagen_key": datos.imagen_key}}
+    )
+    if resultado.matched_count == 0:
+        raise HTTPException(404, "Producto no encontrado")
+
+    return {"id": producto_id, "imagen_key": datos.imagen_key}
 
 
 @app.delete("/productos/{producto_id}", status_code=204)
