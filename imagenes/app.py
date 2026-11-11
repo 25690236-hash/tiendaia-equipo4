@@ -12,13 +12,20 @@ import requests # cliente HTTP para llamar al microservicio Productos
 from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 
 from almacen import AlmacenS3 # adaptador S3 (subir, url, eliminar)
-
+from almacen_azure import AlmacenAzure
 # ---------------------------------------------------------------- Configuración
 PRODUCTOS_URL = os.getenv("PRODUCTOS_URL", "http://productos:8000")
 # Tipos MIME aceptados -> extensión del archivo que se guarda en el bucket
 TIPOS = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
 MAX_BYTES = 5 * 1024 * 1024 # 5 MB: límite para no llenar el almacenamiento
-almacen = AlmacenS3() # al arrancar se conecta a S3 y revisa el bucket
+ALMACEN = os.getenv("ALMACEN", "s3").lower()
+
+if ALMACEN == "azure":
+    almacen = AlmacenAzure()
+elif ALMACEN == "s3":
+    almacen = AlmacenS3()
+else:
+    raise ValueError(f"Adaptador de almacenamiento desconocido: {ALMACEN}")
 TIEMPO_ESPERA = 5 # segundos máximos de espera a Productos
 sesion = requests.Session() # reutiliza conexiones TCP con Productos
 app = FastAPI(title="TiendaIA - Imágenes")
