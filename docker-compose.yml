@@ -80,7 +80,13 @@ services:
     # --appendonly yes: guarda cada escritura en disco para no perder datos al reiniciar
     command: ["redis-server","--appendonly","yes"]
     volumes: [redis_data:/data]
-
+  # Azure Blob Storage local para la prueba
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    restart: unless-stopped
+    command: azurite-blob --blobHost 0.0.0.0
+    ports:
+      - "10000:10000"
 # ------------------------------ Microservicios
 # Ninguno publica puertos (no hay "ports"): solo se alcanzan dentro de la red
 # interna de Compose, por su nombre (http://clientes:8000). Escuchan en el 8000.
@@ -184,6 +190,7 @@ services:
     depends_on: [ventas]
 >>>>>>> ee54333 (Lab3: RabbitMQ en Compose, dependencias y ruta de notificaciones)
 
+<<<<<<< HEAD
   # Worker de inferencia
   worker:
     <<: *servicio
@@ -233,6 +240,11 @@ services:
 <<<<<<< HEAD
   gateway:
 =======
+=======
+
+    
+
+>>>>>>> 5a96cdc (Lab4 F: agrega Azurite)
   # ------------------------------ Punto de entrada
   gateway: 
 >>>>>>> b32faee (Lab 2: pruebas)
