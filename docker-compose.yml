@@ -187,6 +187,10 @@ services:
     <<: *servicio # restart común a todos
     build: {<<: *construir, args: {SERVICIO: imagenes}}
     environment:
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
+      AZURE_STORAGE_CONTAINER: tiendaia-imagenes
+      AZURE_PUBLIC_BLOB_ENDPOINT: http://localhost:10000/devstoreaccount1
+      ALMACEN: s3
       S3_ENDPOINT: http://seaweedfs:8333 # red interna de Docker
       S3_PUBLIC_ENDPOINT: http://localhost:8333 # el navegador descarga desde aquí
       S3_BUCKET: tiendaia-imagenes
