@@ -15,3 +15,11 @@ fecha,destino,prueba,media,desv,unidad,n,errores
 2026-11-10T00:02:25,seaweedfs-laptop,bajada 25 MB,460.88,70.36,MB/s,5,0
 2026-11-10T00:02:26,seaweedfs-laptop,200 archivos de 10 KB,2.83,0.74,ms/archivo,200,0
 2026-11-10T00:02:26,seaweedfs-laptop,rendimiento pequeños,352.75,0,archivos/s,1,0
+2026-11-11T00:17:31,supabase-codespace,subida 1 MB,1.2,0.19,MB/s,5,0
+2026-11-11T00:17:31,supabase-codespace,bajada 1 MB,2.01,0.55,MB/s,5,0
+2026-11-11T00:17:55,supabase-codespace,subida 10 MB,4.19,1.82,MB/s,5,0
+2026-11-11T00:17:55,supabase-codespace,bajada 10 MB,9.31,3.78,MB/s,5,0
+2026-11-11T00:18:46,supabase-codespace,subida 25 MB,5.12,1.55,MB/s,5,0
+2026-11-11T00:18:46,supabase-codespace,bajada 25 MB,5.87,1.6,MB/s,5,0
+2026-11-11T00:19:22,supabase-codespace,200 archivos de 10 KB,179.37,75.97,ms/archivo,200,0
+2026-11-11T00:19:22,supabase-codespace,rendimiento pequeños,5.57,0,archivos/s,1,0
