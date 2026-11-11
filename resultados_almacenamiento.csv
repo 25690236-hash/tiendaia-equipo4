@@ -31,3 +31,19 @@ fecha,destino,prueba,media,desv,unidad,n,errores
 2026-11-11T00:33:29,supabase-codespace,bajada 25 MB,57.84,10.47,MB/s,5,0
 2026-11-11T00:34:05,supabase-codespace,200 archivos de 10 KB,178.41,78.92,ms/archivo,200,0
 2026-11-11T00:34:05,supabase-codespace,rendimiento pequeños,5.6,0,archivos/s,1,0
+2026-11-11T03:23:56,b2-codespace,subida 1 MB,4.98,1.71,MB/s,5,0
+2026-11-11T03:23:56,b2-codespace,bajada 1 MB,8.95,3.07,MB/s,5,0
+2026-11-11T03:24:00,b2-codespace,subida 10 MB,17.3,2.54,MB/s,5,0
+2026-11-11T03:24:00,b2-codespace,bajada 10 MB,44.72,5.0,MB/s,5,0
+2026-11-11T03:24:14,b2-codespace,subida 25 MB,14.65,5.8,MB/s,5,0
+2026-11-11T03:24:14,b2-codespace,bajada 25 MB,53.52,1.91,MB/s,5,0
+2026-11-11T03:26:06,b2-codespace,200 archivos de 10 KB,558.55,345.64,ms/archivo,200,0
+2026-11-11T03:26:06,b2-codespace,rendimiento pequeños,1.79,0,archivos/s,1,0
+2026-11-10T20:35:52,b2-laptop,subida 1 MB,0.3,0.08,MB/s,5,0
+2026-11-10T20:35:52,b2-laptop,bajada 1 MB,2.71,0.71,MB/s,5,0
+2026-11-10T20:39:46,b2-laptop,subida 10 MB,0.23,0.01,MB/s,5,0
+2026-11-10T20:39:46,b2-laptop,bajada 10 MB,4.4,0.19,MB/s,5,0
+2026-11-10T20:50:41,b2-laptop,subida 25 MB,0.21,0.01,MB/s,5,0
+2026-11-10T20:50:41,b2-laptop,bajada 25 MB,2.61,0.88,MB/s,5,0
+2026-11-10T20:52:37,b2-laptop,200 archivos de 10 KB,583.37,338.84,ms/archivo,200,0
+2026-11-10T20:52:37,b2-laptop,rendimiento pequeños,1.71,0,archivos/s,1,0
