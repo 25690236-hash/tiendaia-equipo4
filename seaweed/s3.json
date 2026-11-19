@@ -1,0 +1,17 @@
+{
+    "identities": [
+        {
+            "name": "admin",
+            "credentials": [{"accessKey": "admin", "secretKey": "SVMKg320ChiI_nDqrWp8gO3MdZQhNDWE"}],
+            "actions": ["Admin", "Read", "List", "Tagging", "Write"]
+        },
+        {
+            "name": "svc-imagenes",
+            "credentials": [
+                {"accessKey": "svc-imagenes", "secretKey": "omxnEaIbI7BZw5W2hgRQLWo7tpVUZ9Ze"}
+            ],
+            "actions": ["Read:tiendaia-imagenes", "Write:tiendaia-imagenes",
+                         "List:tiendaia-imagenes"]
+        }
+    ]
+}
