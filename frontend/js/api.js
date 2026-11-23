@@ -26,9 +26,9 @@ this.estado = estado;
 }
 }
 const Api = {
-// URL del gateway fija a la fuerza para evitar cualquier error de conexión
+// Usa la dirección guardada en Configuración; si no hay una, usa localhost.
 base() {
-return "http://localhost:8080";
+    return leerAjuste("tiendaia_api", "http://localhost:8080").replace(/\/+$/, "");
 },
 fijarBase(url) { guardarAjuste("tiendaia_api", url.trim()); },
 // Token JWT (Laboratorio 6). Mientras no exista, las peticiones van sin él.
