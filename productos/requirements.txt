@@ -2,3 +2,4 @@
 fastapi>=0.115 # framework de la API REST (incluye pydantic para validar)
 uvicorn[standard]>=0.30 # servidor ASGI que ejecuta la aplicación FastAPI
 pymongo>=4.6 # cliente oficial de MongoDB para Python
+requests>=2.31

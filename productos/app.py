@@ -8,10 +8,17 @@ import os
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 from pymongo import MongoClient, ReturnDocument
+from fastapi import FastAPI, HTTPException
+app = FastAPI(title="TiendaIA - Clientes")
 
 # Base de datos
 # MONGO_URL llega por variable de entorno (p. ej. mongodb://mongo:27017)[span_5](start_span)[span_5](end_span).
 db = MongoClient(os.environ["MONGO_URL"])["tienda"]
+from fastapi import Depends, FastAPI, HTTPException
+from seguridad import requiere_servicio # Lab. 6: valida x-api-key con Auth
+app = FastAPI(title="TiendaIA - Clientes",
+
+dependencies=[Depends(requiere_servicio)]) # Lab. 6
 
 # Extensión del equipo: Índice único sobre 'id' al iniciar el servicio
 # Evita IDs duplicados en MongoDB y acelera las búsquedas por ID
