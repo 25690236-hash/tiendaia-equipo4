@@ -4,3 +4,4 @@ uvicorn[standard]>=0.30 # servidor ASGI que ejecuta la aplicación FastAPI
 sqlalchemy>=2.0 # crea la tabla y arma las consultas SQL desde Python
 pymysql>=1.1 # controlador que conecta SQLAlchemy con MySQL
 cryptography>=42 # la usa pymysql para la autenticación de MySQL 8
+requests>=2.31 # para hacer peticiones HTTP
