@@ -1,4 +1,5 @@
-# TiendaIA - Laboratorio 5
+
+# TiendaIA - Laboratorio 6
 
 # Configuración reutilizable de los microservicios
 x-servicio: &servicio
@@ -168,6 +169,23 @@ services:
         condition: service_healthy
     networks: [interna]
 
+  # Servicio de autenticación
+  auth:
+    <<: *servicio
+    build:
+      <<: *construir
+      args:
+        SERVICIO: auth
+    environment:
+      JWT_SECRET: ${JWT_SECRET:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      AUTH_DB: /data/auth.db
+    volumes:
+      - auth_data:/data
+    networks: [interna, publica]
+    ports:
+      - "127.0.0.1:8001:8000"
+
   gateway:
     <<: *servicio
     build:
@@ -177,6 +195,8 @@ services:
     environment:
       CORS_ORIGINS: "*"
       IA_URL: ${IA_URL:-http://ia:8000}
+      JWT_SECRET: ${JWT_SECRET:-}
+      API_KEY: ${API_KEY_GATEWAY:-}
     depends_on:
       clientes:
         condition: service_healthy
@@ -236,6 +256,7 @@ volumes:
   mongo_data:
   redis_data:
   modelos:
+  auth_data:
 
 networks:
   publica: {}
