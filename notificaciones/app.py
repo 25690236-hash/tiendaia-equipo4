@@ -132,7 +132,8 @@ async def ciclo_de_vida(app: FastAPI):
 
 app = FastAPI(
     title="TiendaIA - Notificaciones",
-    lifespan=ciclo_de_vida
+    lifespan=ciclo_de_vida,
+    dependencies=[Depends(requiere_servicio)]
 )
 
 
