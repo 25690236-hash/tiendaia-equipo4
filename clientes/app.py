@@ -13,8 +13,11 @@ from pydantic import BaseModel, Field
 from sqlalchemy import (Column, Integer, MetaData, String, Table, create_engine,
                         delete, insert, select, update)
 from sqlalchemy.exc import IntegrityError
+<<<<<<< HEAD
 from fastapi import FastAPI, HTTPException
 app = FastAPI(title="TiendaIA - Clientes")
+=======
+>>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
 
 # ------------------------------------------------------------- Base de datos
 # La URL de conexión llega por variable de entorno (la define docker-compose.yml),

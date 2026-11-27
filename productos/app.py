@@ -16,7 +16,13 @@ app = FastAPI(title="TiendaIA - Clientes")
 db = MongoClient(os.environ["MONGO_URL"])["tienda"]
 from fastapi import Depends, FastAPI, HTTPException
 from seguridad import requiere_servicio # Lab. 6: valida x-api-key con Auth
+<<<<<<< HEAD
 app = FastAPI(title="TiendaIA - Clientes", dependencies=[Depends(requiere_servicio)]) # Lab. 6
+=======
+app = FastAPI(title="TiendaIA - Clientes",
+
+dependencies=[Depends(requiere_servicio)]) # Lab. 6
+>>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
 
 # Extensión del equipo: Índice único sobre 'id' al iniciar el servicio
 # Evita IDs duplicados en MongoDB y acelera las búsquedas por ID
