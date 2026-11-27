@@ -1,9 +1,5 @@
 # API Gateway (Laboratorio 2): punto único de entrada
 fastapi>=0.115 # framework de la API (rutas /api/... y /health)
 uvicorn[standard]>=0.30 # servidor ASGI que ejecuta la aplicación FastAPI
-<<<<<<< HEAD
-requests>=2.31 # cliente HTTP para reenviar las peticiones a los servicios
-=======
 requests>=2.31 # cliente HTTP para reenviar las peticiones a los servicios
 pyjwt>=2.8
->>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
