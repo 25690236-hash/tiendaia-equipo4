@@ -1,9 +1,7 @@
-
 # TiendaIA - Laboratorio 6
 
 # Configuración reutilizable de los microservicios
 x-servicio: &servicio
-<<<<<<< HEAD
   restart: unless-stopped
   build: &construir
     context: .
@@ -15,32 +13,18 @@ x-servicio: &servicio
 
 services:
   # Bases de datos
-=======
-  restart: unless-stopped # reinicia si falla, salvo que se detenga a mano
-  build: &construir
-    context: . # se construye con el Dockerfile de esta carpeta
-
-services:
-# ------------------------------ Bases de datos
-  # MySQL: base relacional para Clientes
->>>>>>> b32faee (Lab 2: pruebas)
   mysql:
     image: mysql:8.4
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-<<<<<<< HEAD
       MYSQL_DATABASE: tienda
       MYSQL_USER: tienda
-=======
-      MYSQL_DATABASE: tienda # base que se crea al iniciar por primera vez
-      MYSQL_USER: tienda # usuario de la aplicación (no se usa root)
->>>>>>> b32faee (Lab 2: pruebas)
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD","mysqladmin","ping","-h","localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       retries: 20
     networks: [interna]
@@ -51,7 +35,7 @@ services:
     volumes:
       - mongo_data:/data/db
     healthcheck:
-      test: ["CMD","mongosh","--quiet","--eval","db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
       interval: 5s
       retries: 20
     networks: [interna]
@@ -59,7 +43,6 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-<<<<<<< HEAD
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_data:/data
@@ -77,25 +60,6 @@ services:
       <<: *construir
       args:
         SERVICIO: clientes
-=======
-    # --appendonly yes: guarda cada escritura en disco para no perder datos al reiniciar
-    command: ["redis-server","--appendonly","yes"]
-    volumes: [redis_data:/data]
-  # Azure Blob Storage local para la prueba
-  azurite:
-    image: mcr.microsoft.com/azure-storage/azurite
-    restart: unless-stopped
-    command: azurite-blob --blobHost 0.0.0.0
-    ports:
-      - "10000:10000"
-# ------------------------------ Microservicios
-# Ninguno publica puertos (no hay "ports"): solo se alcanzan dentro de la red
-# interna de Compose, por su nombre (http://clientes:8000). Escuchan en el 8000.
-  clientes:
-    <<: *servicio # copia las opciones comunes del ancla &servicio
-# Misma imagen base, pero con SERVICIO=clientes (ver Dockerfile)
-    build: {<<: *construir, args: {SERVICIO: clientes}}
->>>>>>> b32faee (Lab 2: pruebas)
     environment:
       DATABASE_URL: mysql+pymysql://tienda:${MYSQL_PASSWORD}@mysql:3306/tienda
     depends_on:
@@ -103,7 +67,6 @@ services:
         condition: service_healthy
     networks: [interna]
 
-<<<<<<< HEAD
   productos:
     <<: *servicio
     build:
@@ -118,20 +81,6 @@ services:
     networks: [interna]
 
   ventas:
-=======
-  productos: 
-    <<: *servicio
-    build: {<<: *construir, args: {SERVICIO: productos}}
-    environment:
-      MONGO_URL: mongodb://mongo:27017
-    depends_on: {mongo: {condition: service_healthy}}
-  
-<<<<<<< HEAD
-  ventas: 
->>>>>>> b32faee (Lab 2: pruebas)
-=======
-  ventas:
->>>>>>> ee54333 (Lab3: RabbitMQ en Compose, dependencias y ruta de notificaciones)
     <<: *servicio
     build:
       <<: *construir
@@ -139,7 +88,6 @@ services:
         SERVICIO: ventas
     environment:
       REDIS_HOST: redis
-<<<<<<< HEAD
       RABBITMQ_HOST: "${RABBITMQ_HOST:-rabbitmq}"
     depends_on:
       redis:
@@ -151,24 +99,15 @@ services:
       productos:
         condition: service_healthy
     networks: [interna]
-=======
-      RABBITMQ_HOST: rabbitmq # Lab. 3
-    depends_on: [redis, clientes, productos]
->>>>>>> ee54333 (Lab3: RabbitMQ en Compose, dependencias y ruta de notificaciones)
 
-  ia: 
+  ia:
     <<: *servicio
     build:
       <<: *construir
       args:
         SERVICIO: ia_service
     environment:
-<<<<<<< HEAD
-<<<<<<< HEAD
       VENTAS_URL: http://ventas:8000
-=======
-      VENTAS_URL: http://ventas:8000 # de aquí obtiene los datos para entrenar
->>>>>>> b32faee (Lab 2: pruebas)
       MODELO_PATH: /modelos/modelo.joblib
       REDIS_HOST: redis
       RABBITMQ_HOST: "${RABBITMQ_HOST:-rabbitmq}"
@@ -182,16 +121,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks: [interna]
-=======
-      VENTAS_URL: http://ventas:8000
-      MODELO_PATH: /modelos/modelo.joblib
-      REDIS_HOST: redis # Lab. 3
-      RABBITMQ_HOST: rabbitmq # Lab. 3
-    volumes: [modelos:/modelos]
-    depends_on: [ventas]
->>>>>>> ee54333 (Lab3: RabbitMQ en Compose, dependencias y ruta de notificaciones)
 
-<<<<<<< HEAD
   # Worker de inferencia
   worker:
     <<: *servicio
@@ -238,9 +168,6 @@ services:
         condition: service_healthy
     networks: [interna]
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
   # Servicio de autenticación
   auth:
     <<: *servicio
@@ -258,24 +185,14 @@ services:
     ports:
       - "127.0.0.1:8001:8000"
 
->>>>>>> 11b8664fec61a32b07f7ac459b70f95524ff234d
+  # Punto de entrada
   gateway:
-=======
-=======
-
-    
-
->>>>>>> 5a96cdc (Lab4 F: agrega Azurite)
-  # ------------------------------ Punto de entrada
-  gateway: 
->>>>>>> b32faee (Lab 2: pruebas)
     <<: *servicio
     build:
       <<: *construir
       args:
         SERVICIO: gateway
     environment:
-<<<<<<< HEAD
       CORS_ORIGINS: "*"
       IA_URL: ${IA_URL:-http://ia:8000}
       JWT_SECRET: ${JWT_SECRET:-}
@@ -328,157 +245,18 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks: [interna]
 
-  # Almacenamiento S3 compatible con SeaweedFS
-  seaweedfs:
-    image: chrislusf/seaweedfs
-    restart: unless-stopped
-    command: >-
-      server -dir=/data -volume.max=100 -master.volumeSizeLimitMB=1024
-      -s3 -s3.config=/etc/seaweedfs/s3.json
-    ports: ["8333:8333"]
-    volumes:
-      - seaweed_data:/data
-      - ./seaweed/s3.json:/etc/seaweedfs/s3.json:ro
-    networks: [interna]
-
-  # Microservicio de imágenes
-  imagenes:
-    <<: *servicio
-    build: {<<: *construir, args: {SERVICIO: imagenes}}
-    environment:
-      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
-      AZURE_STORAGE_CONTAINER: tiendaia-imagenes
-      AZURE_PUBLIC_BLOB_ENDPOINT: http://localhost:10000/devstoreaccount1
-      ALMACEN: s3
-      S3_ENDPOINT: http://seaweedfs:8333
-      S3_PUBLIC_ENDPOINT: http://localhost:8333
-      S3_BUCKET: tiendaia-imagenes
-      S3_ACCESS_KEY: svc-imagenes
-      S3_SECRET_KEY: ${S3_IMAGENES_SECRET}
-    depends_on: [seaweedfs, productos]
-    networks: [interna]
-
-=======
-    # Orígenes que pueden llamar al gateway desde el navegador (CORS). "*" = todos;
-    # en la nube conviene poner la URL exacta del cliente web.
-      CORS_ORIGINS: ${CORS_ORIGINS:-*}
-    depends_on: [clientes, productos, ventas, ia]
-  
-  # ------------------------------ Cliente web
-  # Nginx sirve los archivos estáticos de frontend/ (HTML, CSS y JS) tal cual.
-  # Se abre en http://localhost:8081; el navegador llama al gateway en el 8080.
-  web:
-    image: nginx:1.27-alpine
-    restart: unless-stopped
-    # :ro = solo lectura; al editar un archivo basta con recargar el navegador
-    volumes: ["./frontend:/usr/share/nginx/html:ro"]
-    ports: ["8081:80"]
-    # Volúmenes con nombre: Docker los administra y conservan los datos
-
-  rabbitmq:
-    image: rabbitmq:4-management
-    restart: unless-stopped
-    # 15672 es el panel web. Se publica solo en 127.0.0.1 para que nadie de la red
-    # pueda entrar. El puerto AMQP (5672) NO se publica: solo lo usan los servicios
-    # dentro de la red interna de Docker Compose.
-    ports: ["127.0.0.1:15672:15672"] # panel web solo desde tu máquina
-    # El healthcheck indica cuándo el broker ya acepta conexiones; los servicios
-    # que dependen de él esperan a que esté "healthy" antes de arrancar.
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 10s
-      retries: 10
-  
-<<<<<<< HEAD
->>>>>>> b32faee (Lab 2: pruebas)
-=======
-  # ------------------------------------------------------------ Suscriptor de eventos
-# Notificaciones escucha los eventos "venta.*" que publica Ventas (Pub/Sub) y
-# guarda los avisos en Redis. Usa la misma imagen común con SERVICIO=notificaciones.
-  notificaciones:
-    <<: *servicio
-    build: {<<: *construir, args: {SERVICIO: notificaciones}}
-    # Los hosts se llaman por el nombre del servicio dentro de la red de Compose
-    environment: {REDIS_HOST: redis, RABBITMQ_HOST: rabbitmq}
-    depends_on: {rabbitmq: {condition: service_healthy}}
-
-  # ------------------------------------------------------------ Worker de inferencia
-# Proceso que consume la cola de trabajo "inferencias". Usa el MISMO código e
-# imagen que el servicio de IA, pero arranca worker.py en lugar de uvicorn.
-# Se pueden lanzar varias copias: docker compose up -d --scale worker=3
-  worker:
-    <<: *servicio
-    build: {<<: *construir, args: {SERVICIO: ia_service}}
-    command: ["python", "worker.py"] # reemplaza el CMD (uvicorn) del Dockerfile
-    environment:
-      MODELO_PATH: /modelos/modelo.joblib # modelo entrenado por el servicio de IA
-      REDIS_HOST: redis # donde se escribe el resultado
-      RABBITMQ_HOST: rabbitmq # de donde se leen las solicitudes
-      RETARDO_MS: "200" # pausa artificial: simula un modelo pesado
-    # Volumen compartido con "ia": el worker lee el modelo que "ia" guardó al entrenar
-    volumes: [modelos:/modelos]
-    depends_on: {rabbitmq: {condition: service_healthy}}
-
-# Agregar a docker-compose.yml (Laboratorio 4)
-# Fragmento: estos dos servicios van dentro de "services:" del compose de TiendaIA.
-# Usa las anclas &servicio y &construir definidas al inicio de ese archivo.
-# SeaweedFS: almacenamiento de objetos con API compatible con Amazon S3.
-# "server" levanta en un solo contenedor el master (índice), el volumen
-# (guarda los bytes), el filer y la puerta S3.
-  seaweedfs:
-    image: chrislusf/seaweedfs
-    restart: unless-stopped
-    # -volume.max: máximo de volúmenes; -master.volumeSizeLimitMB: tamaño de
-    # cada volumen; -s3.config: archivo con identidades (llaves) y permisos.
-    # ">-" une las líneas siguientes en una sola (mismo comando, solo más legible).
-    command: >-
-      server -dir=/data -volume.max=100 -master.volumeSizeLimitMB=1024
-      -s3 -s3.config=/etc/seaweedfs/s3.json
-    # 8333 = puerto de la API S3. Se publica porque el navegador descarga las
-    # imágenes directamente de aquí con las URL prefirmadas.
-    ports: ["8333:8333"]
-    volumes:
-      - seaweed_data:/data # los objetos sobreviven al contenedor
-      - ./seaweed/s3.json:/etc/seaweedfs/s3.json:ro # :ro = solo lectura
-  # Microservicio Imágenes: sube y borra objetos y firma URL de descarga.
-  imagenes:
-    <<: *servicio # restart común a todos
-    build: {<<: *construir, args: {SERVICIO: imagenes}}
-    environment:
-      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
-      AZURE_STORAGE_CONTAINER: tiendaia-imagenes
-      AZURE_PUBLIC_BLOB_ENDPOINT: http://localhost:10000/devstoreaccount1
-      ALMACEN: s3
-      S3_ENDPOINT: http://seaweedfs:8333 # red interna de Docker
-      S3_PUBLIC_ENDPOINT: http://localhost:8333 # el navegador descarga desde aquí
-      S3_BUCKET: tiendaia-imagenes
-      S3_ACCESS_KEY: ${S3_ADMIN_KEY} # Lab. 6: cambiar a identidad propia
-      S3_SECRET_KEY: ${S3_ADMIN_SECRET} # valores tomados del archivo .env
-    # Orden de arranque: primero S3 y Productos (Imágenes llama a ambos)
-    depends_on: [seaweedfs, productos]
-# Y en volumes: seaweed_data:
-    
->>>>>>> ee54333 (Lab3: RabbitMQ en Compose, dependencias y ruta de notificaciones)
 volumes:
   mysql_data:
   mongo_data:
   redis_data:
   modelos:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
   auth_data:
-  seaweed_data:
->>>>>>> 11b8664fec61a32b07f7ac459b70f95524ff234d
 
 networks:
-  publica: {}
   interna:
-    internal: true
-  gestion: {}
-=======
-  seaweed_data: # NUEVO (Laboratorio 4): objetos de SeaweedFS
-
->>>>>>> 0e37ba3 (Paso 4. Unir el fragmento con su docker-compose.yml completado)
+  publica:
+  gestion:
