@@ -17,6 +17,8 @@ from pydantic import BaseModel, Field
 
 <<<<<<< HEAD
 from eventos import publicar
+from fastapi import FastAPI, HTTPException
+app = FastAPI(title="TiendaIA - Clientes")
 
 
 # Configuración
@@ -36,6 +38,11 @@ r = redis.Redis(host=os.getenv("REDIS_HOST", "redis"), decode_responses=True)
 CLIENTES_URL = os.getenv("CLIENTES_URL", "http://clientes:8000")
 PRODUCTOS_URL = os.getenv("PRODUCTOS_URL", "http://productos:8000")
 app = FastAPI(title="TiendaIA - Ventas")
+from fastapi import Depends, FastAPI, HTTPException
+from seguridad import requiere_servicio # Lab. 6: valida x-api-key con Auth
+app = FastAPI(title="TiendaIA - Clientes",
+
+dependencies=[Depends(requiere_servicio)]) # Lab. 6
 
 <<<<<<< HEAD
 TIEMPO_ESPERA = 5

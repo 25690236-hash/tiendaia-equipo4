@@ -5,7 +5,13 @@ No llama a otros servicios: el microservicio Ventas lo consulta por HTTP para
 validar que un cliente exista, y el API Gateway le reenvía las peticiones externas.
 """
 import os
+<<<<<<< HEAD
 from fastapi import FastAPI, HTTPException
+=======
+
+from fastapi import Depends, FastAPI, HTTPException
+from seguridad import requiere_servicio
+>>>>>>> 11b8664fec61a32b07f7ac459b70f95524ff234d
 from pydantic import BaseModel, Field
 from sqlalchemy import (Column, Integer, MetaData, String, Table, create_engine,
                         delete, insert, select, update)
@@ -29,9 +35,15 @@ clientes = Table(
     # unique=True: la base de datos impide dos clientes con el mismo correo
     Column("correo", String(120), nullable=False, unique=True),
 )
+<<<<<<< HEAD
 meta.create_all(engine) # crea la tabla si no existe
 
 app = FastAPI(title="TiendaIA - Clientes")
+=======
+meta.create_all(engine)           # crea la tabla si no existe
+app = FastAPI(title="TiendaIA - Clientes", dependencies=[Depends(requiere_servicio)])
+
+>>>>>>> 11b8664fec61a32b07f7ac459b70f95524ff234d
 
 # ---------------------------------------------------------------- Modelo de entrada
 class ClienteIn(BaseModel):

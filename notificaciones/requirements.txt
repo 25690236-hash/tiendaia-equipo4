@@ -3,6 +3,7 @@ fastapi>=0.115
 uvicorn[standard]>=0.30
 redis>=5.0
 pika>=1.3
+<<<<<<< HEAD
 =======
 # Dependencias del servicio Notificaciones (Lab. 3). Docker las instala al construir.
 fastapi>=0.115 # framework web: /health y /notificaciones (y el lifespan)
@@ -10,3 +11,6 @@ uvicorn[standard]>=0.30 # servidor ASGI que ejecuta la app FastAPI (CMD del Dock
 redis>=5.0 # lista "notificaciones" con los avisos más recientes
 pika>=1.3 # cliente de RabbitMQ (AMQP): consume los eventos venta.*
 >>>>>>> ee54333 (Lab3: RabbitMQ en Compose, dependencias y ruta de notificaciones)
+=======
+requests>=2.31
+>>>>>>> 11b8664fec61a32b07f7ac459b70f95524ff234d
