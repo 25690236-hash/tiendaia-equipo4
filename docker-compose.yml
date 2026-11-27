@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-# TiendaIA - Laboratorio 5
-=======
-
 # TiendaIA - Laboratorio 6
->>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
 
 # Configuración reutilizable de los microservicios
 x-servicio: &servicio
@@ -94,10 +89,6 @@ services:
     environment:
       REDIS_HOST: redis
       RABBITMQ_HOST: "${RABBITMQ_HOST:-rabbitmq}"
-<<<<<<< HEAD
-      API_KEY: ${API_KEY_VENTAS:-}
-=======
->>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
     depends_on:
       redis:
         condition: service_healthy
@@ -120,10 +111,6 @@ services:
       MODELO_PATH: /modelos/modelo.joblib
       REDIS_HOST: redis
       RABBITMQ_HOST: "${RABBITMQ_HOST:-rabbitmq}"
-<<<<<<< HEAD
-      API_KEY: ${API_KEY_IA:-}
-=======
->>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
     volumes:
       - modelos:/modelos
     depends_on:
@@ -181,8 +168,6 @@ services:
         condition: service_healthy
     networks: [interna]
 
-<<<<<<< HEAD
-=======
   # Servicio de autenticación
   auth:
     <<: *servicio
@@ -200,7 +185,7 @@ services:
     ports:
       - "127.0.0.1:8001:8000"
 
->>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
+  # Punto de entrada
   gateway:
     <<: *servicio
     build:
@@ -210,10 +195,7 @@ services:
     environment:
       CORS_ORIGINS: "*"
       IA_URL: ${IA_URL:-http://ia:8000}
-<<<<<<< HEAD
-=======
       JWT_SECRET: ${JWT_SECRET:-}
->>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
       API_KEY: ${API_KEY_GATEWAY:-}
     depends_on:
       clientes:
@@ -263,57 +245,18 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks: [interna]
-
-<<<<<<< HEAD
-  # SeaweedFS y servicio de imágenes no estaban incluidos en el
-  # docker-compose.yml original que compartiste.
-  # Añádelos aquí con su configuración original y los cambios del Anexo A.8.
-=======
-  # Almacenamiento S3 compatible con SeaweedFS
-  seaweedfs:
-    image: chrislusf/seaweedfs
-    restart: unless-stopped
-    command: >-
-      server -dir=/data -volume.max=100 -master.volumeSizeLimitMB=1024
-      -s3 -s3.config=/etc/seaweedfs/s3.json
-    ports: ["8333:8333"]
-    volumes:
-      - seaweed_data:/data
-      - ./seaweed/s3.json:/etc/seaweedfs/s3.json:ro
-    networks: [interna]
-
-  # Microservicio de imágenes
-  imagenes:
-    <<: *servicio
-    build: {<<: *construir, args: {SERVICIO: imagenes}}
-    environment:
-      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
-      AZURE_STORAGE_CONTAINER: tiendaia-imagenes
-      AZURE_PUBLIC_BLOB_ENDPOINT: http://localhost:10000/devstoreaccount1
-      ALMACEN: s3
-      S3_ENDPOINT: http://seaweedfs:8333
-      S3_PUBLIC_ENDPOINT: http://localhost:8333
-      S3_BUCKET: tiendaia-imagenes
-      S3_ACCESS_KEY: svc-imagenes
-      S3_SECRET_KEY: ${S3_IMAGENES_SECRET}
-    depends_on: [seaweedfs, productos]
-    networks: [interna]
->>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
 
 volumes:
   mysql_data:
   mongo_data:
   redis_data:
   modelos:
-<<<<<<< HEAD
-=======
   auth_data:
-  seaweed_data:
->>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
 
 networks:
-  publica: {}
   interna:
-    internal: true
-  gestion: {}
+  publica:
+  gestion:
