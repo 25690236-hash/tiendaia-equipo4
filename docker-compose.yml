@@ -89,6 +89,7 @@ services:
     environment:
       REDIS_HOST: redis
       RABBITMQ_HOST: "${RABBITMQ_HOST:-rabbitmq}"
+      API_KEY: ${API_KEY_VENTAS:-}
     depends_on:
       redis:
         condition: service_healthy
@@ -111,6 +112,7 @@ services:
       MODELO_PATH: /modelos/modelo.joblib
       REDIS_HOST: redis
       RABBITMQ_HOST: "${RABBITMQ_HOST:-rabbitmq}"
+      API_KEY: ${API_KEY_IA:-}
     volumes:
       - modelos:/modelos
     depends_on:
@@ -177,6 +179,7 @@ services:
     environment:
       CORS_ORIGINS: "*"
       IA_URL: ${IA_URL:-http://ia:8000}
+      API_KEY: ${API_KEY_GATEWAY:-}
     depends_on:
       clientes:
         condition: service_healthy

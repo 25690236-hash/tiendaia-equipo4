@@ -66,7 +66,7 @@ def entrenar():
     """Entrena el modelo utilizando las ventas del microservicio Ventas."""
 
     try:
-        respuesta = requests.get(f"{VENTAS_URL}/ventas", timeout=30)
+        respuesta = requests.get(f"{VENTAS_URL}/ventas", timeout=30, headers={"x-api-key": os.getenv("API_KEY", "")})
         respuesta.raise_for_status()
         ventas = respuesta.json()
 

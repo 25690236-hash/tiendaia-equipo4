@@ -24,16 +24,16 @@ r = redis.Redis(
 CLIENTES_URL = os.getenv("CLIENTES_URL", "http://clientes:8000")
 PRODUCTOS_URL = os.getenv("PRODUCTOS_URL", "http://productos:8000")
 
-app = FastAPI(title="TiendaIA - Ventas")
 from fastapi import Depends, FastAPI, HTTPException
-from seguridad import requiere_servicio # Lab. 6: valida x-api-key con Auth
-app = FastAPI(title="TiendaIA - Clientes",
+from seguridad import requiere_servicio
 
-dependencies=[Depends(requiere_servicio)]) # Lab. 6
+app = FastAPI(title="TiendaIA - Ventas",
+               dependencies=[Depends(requiere_servicio)])
 
 TIEMPO_ESPERA = 5
 sesion = requests.Session()
-
+# la cabecera se agrega a TODAS las peticiones que haga esta sesión (Lab. 6)
+sesion.headers.update({"x-api-key": os.getenv("API_KEY", "")})
 
 # Modelo de entrada
 class VentaIn(BaseModel):
