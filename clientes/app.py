@@ -7,7 +7,8 @@ validar que un cliente exista, y el API Gateway le reenvía las peticiones exter
 """
 import os
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from seguridad import requiere_servicio
 from pydantic import BaseModel, Field
 from sqlalchemy import (Column, Integer, MetaData, String, Table, create_engine,
                         delete, insert, select, update)
@@ -32,7 +33,8 @@ clientes = Table(
     Column("correo", String(120), nullable=False, unique=True),
 )
 meta.create_all(engine)           # crea la tabla si no existe
-app = FastAPI(title="TiendaIA - Clientes")
+app = FastAPI(title="TiendaIA - Clientes", dependencies=[Depends(requiere_servicio)])
+
 
 
 # --------------------------------------------------------- Modelo de entrada

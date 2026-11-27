@@ -1,4 +1,5 @@
-# TiendaIA - Laboratorio 5
+
+# TiendaIA - Laboratorio 6
 
 # Configuración reutilizable de los microservicios
 x-servicio: &servicio
@@ -168,6 +169,23 @@ services:
         condition: service_healthy
     networks: [interna]
 
+  # Servicio de autenticación
+  auth:
+    <<: *servicio
+    build:
+      <<: *construir
+      args:
+        SERVICIO: auth
+    environment:
+      JWT_SECRET: ${JWT_SECRET:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      AUTH_DB: /data/auth.db
+    volumes:
+      - auth_data:/data
+    networks: [interna, publica]
+    ports:
+      - "127.0.0.1:8001:8000"
+
   gateway:
     <<: *servicio
     build:
@@ -177,6 +195,8 @@ services:
     environment:
       CORS_ORIGINS: "*"
       IA_URL: ${IA_URL:-http://ia:8000}
+      JWT_SECRET: ${JWT_SECRET:-}
+      API_KEY: ${API_KEY_GATEWAY:-}
     depends_on:
       clientes:
         condition: service_healthy
@@ -227,15 +247,43 @@ services:
         condition: service_healthy
     networks: [interna]
 
-  # SeaweedFS y servicio de imágenes no estaban incluidos en el
-  # docker-compose.yml original que compartiste.
-  # Añádelos aquí con su configuración original y los cambios del Anexo A.8.
+  # Almacenamiento S3 compatible con SeaweedFS
+  seaweedfs:
+    image: chrislusf/seaweedfs
+    restart: unless-stopped
+    command: >-
+      server -dir=/data -volume.max=100 -master.volumeSizeLimitMB=1024
+      -s3 -s3.config=/etc/seaweedfs/s3.json
+    ports: ["8333:8333"]
+    volumes:
+      - seaweed_data:/data
+      - ./seaweed/s3.json:/etc/seaweedfs/s3.json:ro
+    networks: [interna]
+
+  # Microservicio de imágenes
+  imagenes:
+    <<: *servicio
+    build: {<<: *construir, args: {SERVICIO: imagenes}}
+    environment:
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
+      AZURE_STORAGE_CONTAINER: tiendaia-imagenes
+      AZURE_PUBLIC_BLOB_ENDPOINT: http://localhost:10000/devstoreaccount1
+      ALMACEN: s3
+      S3_ENDPOINT: http://seaweedfs:8333
+      S3_PUBLIC_ENDPOINT: http://localhost:8333
+      S3_BUCKET: tiendaia-imagenes
+      S3_ACCESS_KEY: svc-imagenes
+      S3_SECRET_KEY: ${S3_IMAGENES_SECRET}
+    depends_on: [seaweedfs, productos]
+    networks: [interna]
 
 volumes:
   mysql_data:
   mongo_data:
   redis_data:
   modelos:
+  auth_data:
+  seaweed_data:
 
 networks:
   publica: {}
