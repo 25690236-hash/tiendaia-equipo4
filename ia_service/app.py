@@ -11,6 +11,7 @@ import joblib
 import pandas as pd
 import requests
 from fastapi import FastAPI, HTTPException, Query
+app = FastAPI(title="TiendaIA - ia_service")
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
@@ -20,7 +21,6 @@ from sklearn.preprocessing import OneHotEncoder
 
 # Importar las rutas de inferencia asíncrona del Laboratorio 3
 from cola import router as cola_router
-
 
 # --------------------------------------------------------- Configuración
 
@@ -66,11 +66,7 @@ def entrenar():
     """Entrena el modelo utilizando las ventas del microservicio Ventas."""
 
     try:
-<<<<<<< HEAD
         respuesta = requests.get(f"{VENTAS_URL}/ventas", timeout=30, headers={"x-api-key": os.getenv("API_KEY", "")})
-=======
-        respuesta = requests.get(f"{VENTAS_URL}/ventas", timeout=30)
->>>>>>> 4a8411fb609b8b33b2958cdf2d0b64ccbdfa4e30
         respuesta.raise_for_status()
         ventas = respuesta.json()
 

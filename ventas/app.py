@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 
 from eventos import publicar
 from fastapi import FastAPI, HTTPException
-app = FastAPI(title="TiendaIA - Clientes")
+app = FastAPI(title="TiendaIA - Ventas")
 
 
 # Configuración

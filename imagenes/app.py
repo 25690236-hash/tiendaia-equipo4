@@ -13,6 +13,8 @@ from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 
 from almacen import AlmacenS3 # adaptador S3 (subir, url, eliminar)
 from almacen_azure import AlmacenAzure
+from fastapi import FastAPI, HTTPException
+app = FastAPI(title="TiendaIA - Imágenes")
 # ---------------------------------------------------------------- Configuración
 PRODUCTOS_URL = os.getenv("PRODUCTOS_URL", "http://productos:8000")
 # Tipos MIME aceptados -> extensión del archivo que se guarda en el bucket
@@ -28,7 +30,14 @@ else:
     raise ValueError(f"Adaptador de almacenamiento desconocido: {ALMACEN}")
 TIEMPO_ESPERA = 5 # segundos máximos de espera a Productos
 sesion = requests.Session() # reutiliza conexiones TCP con Productos
+# la cabecera se agrega a TODAS las peticiones que haga esta sesión (Lab. 6)
+sesion.headers.update({"x-api-key": os.getenv("API_KEY", "")})
 app = FastAPI(title="TiendaIA - Imágenes")
+from fastapi import Depends, FastAPI, HTTPException
+from seguridad import requiere_servicio # Lab. 6: valida x-api-key con Auth
+app = FastAPI(title="TiendaIA - Clientes",
+
+dependencies=[Depends(requiere_servicio)]) # Lab. 6
 def producto(producto_id: int):
     try:
         respuesta = sesion.get(
